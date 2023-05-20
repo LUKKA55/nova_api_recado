@@ -6,6 +6,7 @@ import { pgHelper } from './database/pg-helper';
 const api = express();
 const port = process.env.PORT || 9000;
 
+api.use(express.json(), cors());
 makeRoutes(api);
 api.listen(port, () => console.log(`server rodando na porta ${port}`));
 
@@ -16,8 +17,6 @@ api.listen(port, () => console.log(`server rodando na porta ${port}`));
 // 		api.listen(port, () => console.log(`server rodando na porta ${port}`));
 // 	})
 // 	.catch((error) => console.log('ERROR ao conectar ao DB - ', error));
-
-api.use(express.json(), cors());
 
 api.get('/', (req: Request, res: Response) =>
 	res.send('<h1>API Recado Nova</h1>')
