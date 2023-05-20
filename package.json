@@ -12,7 +12,7 @@
 		"Mrun": "npm run typeorm migration:run -- -d src/database/typeorm.ts",
 		"Mrevert": "npm run typeorm migration:revert -- -d src/database/typeorm.ts",
 		"Mshow": "npm run typeorm migration:show -- -d src/database/typeorm.ts",
-		"build": "npx tsc && node ./dist/server.js"
+		"build": "npx tsc "
 	},
 	"author": "",
 	"license": "ISC",
