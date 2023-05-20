@@ -4,6 +4,6 @@ export interface IRecado {
 	text: string;
 	user_id: string;
 	status: boolean;
-	create_at?: string;
-	update_at?: string;
+	create_at: string;
+	update_at: string;
 }
