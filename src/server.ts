@@ -6,13 +6,16 @@ import { pgHelper } from './database/pg-helper';
 const api = express();
 const port = process.env.PORT || 9000;
 
-pgHelper
-	.connect()
-	.then(() => {
-		makeRoutes(api);
-		api.listen(port, () => console.log(`server rodando na porta ${port}`));
-	})
-	.catch((error) => console.log('ERROR ao conectar ao DB - ', error));
+makeRoutes(api);
+api.listen(port, () => console.log(`server rodando na porta ${port}`));
+
+// pgHelper
+// 	.connect()
+// 	.then(() => {
+// 		makeRoutes(api);
+// 		api.listen(port, () => console.log(`server rodando na porta ${port}`));
+// 	})
+// 	.catch((error) => console.log('ERROR ao conectar ao DB - ', error));
 
 api.use(express.json(), cors());
 
