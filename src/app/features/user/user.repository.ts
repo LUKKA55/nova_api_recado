@@ -1,4 +1,4 @@
-import { pgHelper } from '../../../main/pg-helper';
+import { DatabaseConnection } from '../../../main/pg-helper';
 import { IUser } from '../../models/interfaces/user.interface';
 import { User } from '../../models/user.class';
 import { TableUser } from '../../shared/database/entities/TableUser';
@@ -8,7 +8,9 @@ import { TableRecado } from '../../shared/database/entities/TableRecado';
 
 export class UserRepository {
 	async getAllUser(): Promise<IUser[]> {
-		const allUser = await pgHelper.client.getRepository(TableUser).find();
+		const allUser = await DatabaseConnection.client
+			.getRepository(TableUser)
+			.find();
 
 		const compileUser = allUser.map((user) => {
 			return new User(
@@ -24,9 +26,11 @@ export class UserRepository {
 	}
 
 	async getUserById(id: string): Promise<IUser | null> {
-		const userById = await pgHelper.client.getRepository(TableUser).findOne({
-			where: { uid: id },
-		});
+		const userById = await DatabaseConnection.client
+			.getRepository(TableUser)
+			.findOne({
+				where: { uid: id },
+			});
 		if (userById === null) return null;
 
 		const compileUser = new User(
@@ -45,23 +49,25 @@ export class UserRepository {
 			return new Error('Password inválido');
 		}
 		if (
-			(await pgHelper.client
+			(await DatabaseConnection.client
 				.getRepository(TableUser)
 				.findOne({ where: { email: email } })) !== null
 		) {
 			return new Error('Email já existe');
 		}
 
-		const createUser = pgHelper.client.getRepository(TableUser).create({
-			uid: v4(),
-			name: name,
-			email: email,
-			password: password,
-			created_at: newDate(),
-			updated_at: newDate(),
-		});
+		const createUser = DatabaseConnection.client
+			.getRepository(TableUser)
+			.create({
+				uid: v4(),
+				name: name,
+				email: email,
+				password: password,
+				created_at: newDate(),
+				updated_at: newDate(),
+			});
 
-		const save = await pgHelper.client
+		const save = await DatabaseConnection.client
 			.getRepository(TableUser)
 			.save(createUser);
 
@@ -77,13 +83,17 @@ export class UserRepository {
 	}
 
 	async deleteUser(id: string) {
-		const findUser = await pgHelper.client.getRepository(TableUser).findOne({
-			where: { uid: id },
-		});
+		const findUser = await DatabaseConnection.client
+			.getRepository(TableUser)
+			.findOne({
+				where: { uid: id },
+			});
 		if (findUser === null) return null;
-		const deleteUser = await pgHelper.client.getRepository(TableUser).delete({
-			uid: id,
-		});
+		const deleteUser = await DatabaseConnection.client
+			.getRepository(TableUser)
+			.delete({
+				uid: id,
+			});
 
 		return deleteUser;
 	}
@@ -99,19 +109,21 @@ export class UserRepository {
 		}
 
 		if (
-			(await pgHelper.client
+			(await DatabaseConnection.client
 				.getRepository(TableUser)
 				.findOne({ where: { email: email } })) !== null
 		) {
 			return new Error('Email já existe');
 		}
 
-		const findUser = await pgHelper.client.getRepository(TableUser).findOne({
-			where: { uid: id },
-		});
+		const findUser = await DatabaseConnection.client
+			.getRepository(TableUser)
+			.findOne({
+				where: { uid: id },
+			});
 		if (findUser === null) return new Error('ID user não encontrado.');
 
-		await pgHelper.client.getRepository(TableUser).update(
+		await DatabaseConnection.client.getRepository(TableUser).update(
 			{ uid: id },
 			{
 				name: name ? name : undefined,
@@ -120,9 +132,11 @@ export class UserRepository {
 				updated_at: newDate(),
 			}
 		);
-		const findUpdate = await pgHelper.client.getRepository(TableUser).findOne({
-			where: { uid: id },
-		});
+		const findUpdate = await DatabaseConnection.client
+			.getRepository(TableUser)
+			.findOne({
+				where: { uid: id },
+			});
 
 		if (findUpdate !== null) {
 			const compileUser = new User(
@@ -138,9 +152,11 @@ export class UserRepository {
 	}
 
 	async loginUser({ name, email, password }: IUser) {
-		const loginUser = await pgHelper.client.getRepository(TableUser).findOne({
-			where: { name: name, email: email, password: password },
-		});
+		const loginUser = await DatabaseConnection.client
+			.getRepository(TableUser)
+			.findOne({
+				where: { name: name, email: email, password: password },
+			});
 		if (loginUser === null) return null;
 
 		const compileLoginUser = new User(

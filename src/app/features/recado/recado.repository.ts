@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 import { IRecado } from '../../models/interfaces/recado.interface';
 import { TableRecado } from '../../shared/database/entities/TableRecado';
-import { pgHelper } from '../../../main/pg-helper';
+import { DatabaseConnection } from '../../../main/pg-helper';
 import newDate from '../../utils/newDate';
 import { Recado } from '../../models/recado.class';
 import { DeleteResult, Like } from 'typeorm';
@@ -9,24 +9,26 @@ import { TableUser } from '../../shared/database/entities/TableUser';
 
 export class RecadoRepository {
 	async addRecado({ title, text, user_id }: IRecado): Promise<IRecado | null> {
-		const findUser = await pgHelper.client
+		const findUser = await DatabaseConnection.client
 			.getRepository(TableUser)
 			.findOne({ where: { uid: user_id } });
 
 		if (findUser === null) {
 			return null;
 		}
-		const createRecado = pgHelper.client.getRepository(TableRecado).create({
-			title: title,
-			text: text,
-			user_id: user_id,
-			uid: v4(),
-			status: true,
-			created_at: newDate(),
-			updated_at: newDate(),
-		});
+		const createRecado = DatabaseConnection.client
+			.getRepository(TableRecado)
+			.create({
+				title: title,
+				text: text,
+				user_id: user_id,
+				uid: v4(),
+				status: true,
+				created_at: newDate(),
+				updated_at: newDate(),
+			});
 
-		const save = await pgHelper.client
+		const save = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.save(createRecado);
 		const compileRecado = new Recado(
@@ -42,7 +44,7 @@ export class RecadoRepository {
 	}
 
 	async findAllRecado() {
-		const recadoListAll = await pgHelper.client
+		const recadoListAll = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.find();
 
@@ -61,7 +63,7 @@ export class RecadoRepository {
 	}
 
 	async findRecadoByUser(user_id: string): Promise<IRecado[]> {
-		const recadoList = await pgHelper.client
+		const recadoList = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.find({ where: { user_id: user_id } });
 
@@ -80,7 +82,7 @@ export class RecadoRepository {
 	}
 
 	async findOneRecadoById(recado_id: string): Promise<IRecado | null> {
-		const recado = await pgHelper.client
+		const recado = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.findOne({ where: { uid: recado_id } });
 
@@ -100,13 +102,13 @@ export class RecadoRepository {
 	}
 
 	async updateRecado({ id, title, text }: IRecado): Promise<IRecado | null> {
-		const findRecado = await pgHelper.client
+		const findRecado = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.findOne({ where: { uid: id } });
 		if (findRecado === null) {
 			return null;
 		}
-		await pgHelper.client.getRepository(TableRecado).update(
+		await DatabaseConnection.client.getRepository(TableRecado).update(
 			{ uid: id },
 			{
 				title: title ? title : undefined,
@@ -114,7 +116,7 @@ export class RecadoRepository {
 				updated_at: newDate(),
 			}
 		);
-		const findRecadoUpdate = await pgHelper.client
+		const findRecadoUpdate = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.findOne({ where: { uid: id } });
 		if (findRecadoUpdate === null) {
@@ -133,32 +135,32 @@ export class RecadoRepository {
 	}
 
 	async deleteRecado(id: string): Promise<null | DeleteResult> {
-		const findRecado = await pgHelper.client
+		const findRecado = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.findOne({ where: { uid: id } });
 		if (findRecado === null) {
 			return null;
 		}
-		const deleteRecado = await pgHelper.client
+		const deleteRecado = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.delete({ uid: id });
 		return deleteRecado;
 	}
 
 	async arquivaRecado(id: string): Promise<null | IRecado> {
-		const findRecado = await pgHelper.client
+		const findRecado = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.findOne({ where: { uid: id } });
 		if (findRecado === null) {
 			return null;
 		}
-		await pgHelper.client.getRepository(TableRecado).update(
+		await DatabaseConnection.client.getRepository(TableRecado).update(
 			{ uid: id },
 			{
 				status: false,
 			}
 		);
-		const findRecadoUpdate = await pgHelper.client
+		const findRecadoUpdate = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.findOne({ where: { uid: id } });
 		if (findRecadoUpdate === null) {
@@ -177,19 +179,19 @@ export class RecadoRepository {
 	}
 
 	async desarquivaRecado(id: string): Promise<null | IRecado> {
-		const findRecado = await pgHelper.client
+		const findRecado = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.findOne({ where: { uid: id } });
 		if (findRecado === null) {
 			return null;
 		}
-		await pgHelper.client.getRepository(TableRecado).update(
+		await DatabaseConnection.client.getRepository(TableRecado).update(
 			{ uid: id },
 			{
 				status: true,
 			}
 		);
-		const findRecadoUpdate = await pgHelper.client
+		const findRecadoUpdate = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.findOne({ where: { uid: id } });
 		if (findRecadoUpdate === null) {
@@ -208,7 +210,7 @@ export class RecadoRepository {
 	}
 
 	async findRecadoStatusTrueByUser(id: string): Promise<IRecado[]> {
-		const findRecadoByUser = await pgHelper.client
+		const findRecadoByUser = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.find({ where: { user_id: id, status: true } });
 
@@ -227,7 +229,7 @@ export class RecadoRepository {
 	}
 
 	async findRecadoStatusFalseByUser(id: string): Promise<IRecado[]> {
-		const findRecadoByUser = await pgHelper.client
+		const findRecadoByUser = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.find({ where: { user_id: id, status: false } });
 
@@ -246,7 +248,7 @@ export class RecadoRepository {
 	}
 
 	async searchRecadoTrueByUser(id: string, title: string) {
-		const searchRecadoTrue = await pgHelper.client
+		const searchRecadoTrue = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.find({
 				where: { user_id: id, title: Like(`%${title}%`), status: true },
@@ -266,7 +268,7 @@ export class RecadoRepository {
 	}
 
 	async searchRecadoFalseByUser(id: string, title: string) {
-		const searchRecadoFalse = await pgHelper.client
+		const searchRecadoFalse = await DatabaseConnection.client
 			.getRepository(TableRecado)
 			.find({
 				where: { user_id: id, title: Like(`%${title}%`), status: false },
