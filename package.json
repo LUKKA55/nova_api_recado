@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
+		"dev": "ts-node-dev --respawn --transpile-only ./src/main/index.ts",
 		"typeorm": "typeorm-ts-node-commomjs",
 		"Ecreate": "npx typeorm entity:create",
 		"Mcreate": "npx typeorm migration:create",
