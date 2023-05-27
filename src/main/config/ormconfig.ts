@@ -12,6 +12,7 @@ const config: DataSourceOptions = {
 	logging: false,
 	entities: [TableUser, TableRecado],
 	migrations: [CreateTableRecado1684457998367, CreateTableUser1684457976753],
+	schema: 'public',
 	ssl: {
 		rejectUnauthorized: false,
 	},
