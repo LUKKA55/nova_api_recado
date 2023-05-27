@@ -1,14 +1,20 @@
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 import config from './config/ormconfig';
 
-export const pgHelper = {
-	client: null as unknown as DataSource,
-	async connect(): Promise<void> {
-		this.client = new DataSource(config);
-		await this.client.initialize();
-	},
-	async disconnect(): Promise<void> {
-		await this.client.destroy();
-		this.client = null as any;
-	},
-};
+export class DatabaseConnection {
+	private static _client: any;
+
+	public static get client(): DataSource {
+		return DatabaseConnection._client;
+	}
+
+	static async connection(): Promise<void> {
+		DatabaseConnection._client = new DataSource(config);
+		await DatabaseConnection._client.initialize();
+	}
+
+	static async disconnection(): Promise<void> {
+		await DatabaseConnection._client.destroy();
+		DatabaseConnection._client = null as any;
+	}
+}

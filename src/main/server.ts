@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { makeRoutes } from './config/index.routes';
-import { pgHelper } from './pg-helper';
 import { createServer } from './config/express.config';
 
 export const runServer = () => {

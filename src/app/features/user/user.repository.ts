@@ -5,7 +5,6 @@ import { TableUser } from '../../shared/database/entities/TableUser';
 import newDate from '../../utils/newDate';
 import { v4 } from 'uuid';
 import { TableRecado } from '../../shared/database/entities/TableRecado';
-import { DataSource } from 'typeorm';
 
 export class UserRepository {
 	async getAllUser(): Promise<IUser[]> {
