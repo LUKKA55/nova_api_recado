@@ -13,15 +13,13 @@ export class CreateTableRecado1684457998367 implements MigrationInterface {
 					{ name: 'user_id', type: 'uuid', isNullable: false },
 					{
 						name: 'created_at',
-						type: 'timestamp',
+						type: 'varchar',
 						isNullable: false,
-						default: 'current_timestamp',
 					},
 					{
 						name: 'updated_at',
-						type: 'timestamp',
+						type: 'varchar',
 						isNullable: false,
-						default: 'current_timestamp',
 					},
 				],
 				foreignKeys: [

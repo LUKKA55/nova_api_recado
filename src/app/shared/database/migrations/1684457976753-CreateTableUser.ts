@@ -12,15 +12,13 @@ export class CreateTableUser1684457976753 implements MigrationInterface {
 					{ name: 'password', type: 'varchar', isNullable: false },
 					{
 						name: 'created_at',
-						type: 'timestamp',
+						type: 'varchar',
 						isNullable: false,
-						default: 'current_timestamp',
 					},
 					{
 						name: 'updated_at',
-						type: 'timestamp',
+						type: 'varchar',
 						isNullable: false,
-						default: 'current_timestamp',
 					},
 				],
 			})

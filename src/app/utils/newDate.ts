@@ -1,4 +1,4 @@
-function newDate() {
+export default function newDate() {
 	const data = new Date();
 
 	const dia = String(data.getDate()).padStart(2, '0');
@@ -13,7 +13,5 @@ function newDate() {
 
 	const segundo = String(data.getSeconds()).padStart(2, '0');
 
-	return `${hora}:${minuto}:${segundo} - ${dia}/${mes}/${ano}`;
+	return `${hora}:${minuto}:${segundo}-${dia}/${mes}/${ano}`;
 }
-
-export default newDate;

@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { UserService } from '../service/user.service';
 import { IUser } from '../../../models/interfaces/user.interface';
 import { ParsedQs } from 'qs';
+import { getIdByToken } from '../../../utils/getIdByToken';
+import { validateDataUser, validateGetByIdUser } from '../middlewares';
 
 export class UserController {
 	constructor(public service: UserService) {
@@ -9,82 +11,99 @@ export class UserController {
 	}
 
 	async createUser_handle(req: Request, res: Response) {
-		const { name, email, password } = req.body;
-		const response = await this.service.createUser_execute({
-			name,
-			email,
-			password,
-		});
+		try {
+			const { name, email, password } = req.body;
+			await validateDataUser(name, email, password);
+			const response = await this.service.createUser_execute({
+				name,
+				email,
+				password,
+			});
 
-		if (response instanceof Error) {
-			return res.status(404).json({ message: response.message });
+			return res.status(200).json({ message: 'Cadastrado com SUCESSO.' });
+		} catch (error) {
+			if (error instanceof Error) {
+				return res.status(404).json({ message: error.message });
+			}
 		}
-		return res
-			.status(200)
-			.json({ message: 'Cadastrado com SUCESSO.', data: response });
 	}
 
 	async getAllUser_handle(req: Request, res: Response) {
-		const response = await this.service.getAllUser_execute();
-
-		if (!response.length) {
-			return res.status(200).send('Sem usuários.');
+		try {
+			const response = await this.service.getAllUser_execute();
+			return res.status(200).json({ ok: true, data: response });
+		} catch (error) {
+			if (error instanceof Error) {
+				return res.status(404).json({ message: error.message });
+			}
 		}
-		return res.status(200).json({ ok: true, data: response });
 	}
 
 	async getUserById_handle(req: Request, res: Response) {
-		const id = req.params.id;
-		const response = await this.service.getUserById_execute(id);
-		if (!response) {
-			return res.status(404).json({ message: 'User não encontrado' });
+		try {
+			const id = req.params.id;
+			await validateGetByIdUser(id);
+			const response = await this.service.getUserById_execute(id);
+			return res.status(200).json({ data: response });
+		} catch (error) {
+			if (error instanceof Error) {
+				return res.status(404).json({ message: error.message });
+			}
 		}
-		return res.status(200).json({ data: response });
 	}
 
 	async deleteUser_handle(req: Request, res: Response) {
-		const id = req.params.id;
-		const response = await this.service.deleteUser_execute(id);
-		if (!response) {
-			return res.status(404).json({ message: 'ERROR no delete' });
+		try {
+			const id = getIdByToken(req.headers.authorization as string);
+			await this.service.deleteUser_execute(id);
+			return res.status(200).json({
+				message: `Usuário deletado com SUCESSO`,
+			});
+		} catch (error) {
+			if (error instanceof Error) {
+				return res.status(404).json({ message: error.message });
+			}
 		}
-		return res.status(200).json({
-			message: `Usuário de id ${id} deletado com SUCESSO`,
-		});
 	}
 
 	async updateUser_handle(req: Request, res: Response) {
-		const id = req.params.id;
-		const { name, email, password } = req.body;
-
-		const response = await this.service.updateUser_execute({
-			id,
-			name,
-			email,
-			password,
-		});
-		if (response instanceof Error) {
-			return res.status(404).json({ message: response.message });
+		try {
+			const id = getIdByToken(req.headers.authorization as string);
+			const { name, email, password } = req.body;
+			await validateDataUser(name, email, password);
+			const response = await this.service.updateUser_execute({
+				id,
+				name,
+				email,
+				password,
+			});
+			return res.status(200).json({
+				message: `Usuário alterado com SUCESSO`,
+				data: response,
+			});
+		} catch (error) {
+			if (error instanceof Error) {
+				return res.status(404).json({ message: error.message });
+			}
 		}
-		return res.status(200).json({
-			message: `Usuário de id ${id} alterado com SUCESSO`,
-			data: response,
-		});
 	}
 
 	async loginUser_handle(req: Request, res: Response) {
-		const { name, email, password } = req.body;
-		const response = await this.service.loginUser_execute({
-			name,
-			email,
-			password,
-		} as IUser);
-		if (!response) {
-			return res.status(404).json({ message: 'ERROR no login' });
+		try {
+			const { name, email, password } = req.body;
+			const response = await this.service.loginUser_execute({
+				name,
+				email,
+				password,
+			} as IUser);
+			return res.status(200).json({
+				message: `Login feito com SUCESSO.`,
+				data: response,
+			});
+		} catch (error) {
+			if (error instanceof Error) {
+				return res.status(404).json({ message: error.message });
+			}
 		}
-		return res.status(200).json({
-			message: `Login feito com SUCESSO.`,
-			data: response,
-		});
 	}
 }
