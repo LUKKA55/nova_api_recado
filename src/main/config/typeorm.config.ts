@@ -4,7 +4,7 @@ import { CreateTableUser1684457976753 } from '../../app/shared/database/migratio
 import { TableUser } from '../../app/shared/database/entities/TableUser';
 import { TableRecado } from '../../app/shared/database/entities/TableRecado';
 import { envs } from '../../app/envs/envs';
-import { TestMigration1687181421064 } from '../../../tests/app/shared/migrations/1687181421064-TestMigration';
+// import { TestMigration1687181421064 } from '../../../tests/app/shared/migrations/1687181421064-TestMigration';
 
 let config: DataSourceOptions = {
 	type: 'postgres',
@@ -19,15 +19,15 @@ let config: DataSourceOptions = {
 	},
 };
 
-if (process.env.NODE_ENV === 'test') {
-	config = {
-		type: 'sqlite',
-		database: './dbtest.sqlite',
-		logging: false,
-		synchronize: false,
-		entities: [TableUser, TableRecado],
-		migrations: [TestMigration1687181421064],
-	};
-}
+// if (process.env.NODE_ENV === 'test') {
+// 	config = {
+// 		type: 'sqlite',
+// 		database: './dbtest.sqlite',
+// 		logging: false,
+// 		synchronize: false,
+// 		entities: [TableUser, TableRecado],
+// 		migrations: [TestMigration1687181421064],
+// 	};
+// }
 export const dataSource = new DataSource(config);
 export { config };
